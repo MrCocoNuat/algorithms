@@ -1,0 +1,69 @@
+Some more prob properties review:
+
+Total Probability:
+P(A) = P(A and B)+P(A and -B)
+
+
+Formal treatment of random variables X : S -> S_X
+P(X=x_0) = sum over all sample points in S that give the same X result as x_0
+
+each X gives a probability distribution on S, simply
+
+Composition, addition, vectorization:
+Y=f(X), Z=X+Y, Z=(X,Y)
+
+Indicator variables exist too for any sets
+
+
+e.g. let X,Y be uniform over {1,2,3,4,5,6}
+Z=X+Y, P(Z=2) = 1/36, P(Z=4) = 3/36, P(Z=12) = 1/36
+W=Indicator(X=1 or Y=1), P(W=1) = 11/36, P(W=0) = 25/36
+
+Independence of random variables:
+(forall s,t)(P(X=s and Y=t) = P(X=s) * P(Y=t))
+In above example, X independent Y, X dependent Z, Y dependent W
+
+e.g. let X,Y be uniform over \Z_m, so (X,Y) uniform over \Z_m^2
+Claim Z=X+Y is uniform over \Z_m: quite intuitive
+X and Z are independent, again intuitive since Y will now fully determine Z
+
+
+Take a finite list of X_i:
+A finite list of s_i is an assignment of X_i.
+This list of X_i can be k-wise independent, meaning that any k-set is mutually independent,
+i.e. P(AND_i X_i=s_i) = PROD_i P(X_i=s_i)
+Essentially, mutual indepedence guarantees that knowledge of any other X_j does not change
+prior probabilities of X_i.
+
+From above, [X,Y,Z] are 2-wise independent (pairwise), but definitely NOT 3-wise indepednent
+
+
+
+The discrete uniform distribution over S is simple enough
+The (discrete) binomial distribution over [0,n] follows P(x=k) = C(n,k) p^k (1-p)^(n-k)
+    The expectation is pn, the variance p(1-p)n
+    Relatably, the number of successes in n independent Bernoulli trials with P(success) = p
+The (discrete) geometric distribution follows P(x=k) = p(1-p)^k-1   <starting at 1, not 0>
+    Relatably, the number of independent Bernoulli trials before and including the first success
+    The expectation is 1/p,
+
+
+To be a distribution at all, sum_s P(X=s) = 1, zeroth moment
+Once that is established, sum_s sP(X=s) = E(X), the expectation, first moment
+E(X^2)-E(X)^2 = Var(x), the variance, second moment
+
+Expectation is ALWAYS linear, and when the variables are independent, also multiplicativeL
+
+Tail-summing, or taking advantage of CMFs
+if X is over [1,\infty], E(X) = SUM_i P(X >= i)
+Proven with a table - rows are i * P(X=i), columns are P(X >= i). Sum of all is E(X)
+e.g. Geom. X:
+     E(X) = SUM_i P(X >= i) = SUM_i q^(i-1) = 1/(1-q) = 1/p
+
+Properly, Var(X) = E((X-E(X))^2) = E(X^2) - E(X)^2
+
+Total Expectation:
+Total Probability but for expectation instead
+
+Basic ineqs:
+X real, Var(X) >= 0

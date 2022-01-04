@@ -1,0 +1,31 @@
+Hand simulations of a 2-3 tree:
+
+simple inductive proof that 2-3 tree of height h has at most 3^h = n leaves
+Base case: for h=0 then tree has 1 leaf <= 3^0 = 1
+Hypothesis: 2-3 tree of height h has at most 3^h leaves
+Induction step: 2-3 tree of height h+1 has at most 3 subtrees each of height h
+	  each subtree has at most 3^h leaves
+	  therefore the whole tree of height h+1 has at most 3*3^h = 3^(h+1) leaves
+Very similar to argument that tree has at least 2^h leaves
+
+include pointer to parent in each node for fast traversal up and down the tree
+especially when recursively deleting nodes - traverse down to deletion target
+traverse up until a node adoption
+
+Traditional - real life - trees don't have to traverse to children
+to read their guides, that is tons of pointer dereferences for no real reason
+instead each node stores the guides of their children in an array, only refer
+to that sequentially to find the first guide that is greater than the target
+then choose that child to dereference.
+Now leaves store only data, whereas parents of leaves store all their guide keys.
+
+sometimes sibling pointers exist as well for faster deletion
+(no parent-sibling lookups) at the cost of linear space, no big deal
+
+
+AddToRange operation - add D to the data of each key in some range
+This can be done in O(log n), by storing a datum in every node, not just leaves
+then to find the data of leaf, find the sum of data in every node on the traversal
+this is free since traversal to the node is necessary anyway
+Now to add range just add D to the data of the correct internal nodes
+

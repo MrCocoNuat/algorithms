@@ -1,0 +1,155 @@
+review oOBf discrete math - number theory in integers only
+
+define the divides relation a|b equivalent to exists z so that az = b
+
+some universals:
+forall a a|0 and 1|a and -1|a
+some properties - divides is:
+reflexive a|a
+nearly antisymmetric a|b and b|a implies a= +-b
+transitive a|b and b|c implies a|c
+
+the division with remainder function:
+divide(a,b) = (q,r) where a = bq+r and 0<=r<b
+condition is that b > 0
+proved that (q,r) is unique for all (a,b), and exists for all (a,b)
+so this function is well-defined
+additionally define the remainder = modulus a%b (for positive b only!) as r
+
+
+the greatest common divisor function:
+gcd(a,b) = d
+where d is nonnegative and forall d' is common divisor, d'|d
+then d is immediately unique if it exists; does it exist?
+an algorithm that calculates gcd(a,b) will suffice:
+Euclidean Algorithm for gcd(a,b):
+	  if b = 0: return a
+	  return gcd(b, a%b)
+
+then algorithm takes O(log n) division steps to finish
+since it is easy to prove that a_i+1 * 2 <= a_i-1
+      so argument at least halves after two steps
+in compact form, write a_i+1 = a_i-1 - q_i a_i
+which ties into the extended Euclidean algorithm
+
+Bezout's:
+forall a,b exists s,t such that as+bt=gcd(a,b)
+these s,t can be calculated "for free" using extended Euclidean algo:
+in compact form, (a,s,t)_i+1 = (a,s,t)_i-1 - q_i * (a,s,t)_i
+(a,s,t)_0 = (a,1,0) and (a,s,t)_1 = (b,0,1)
+the process ends at (a,s,t)_h-1 = (gcd,co-s,co-t), (a,s,t)_h = (0,...,...)
+and co-s, co-t are the cofactors
+
+immediately leading to the special case:
+forall a coprime b, exists s,t such that as+bt=1,
+very nice for isolation of modular exponents
+
+"coprime" lemma is a result,
+c | ab AND a coprime c IMPLIES c | b,
+intuitive enough, provable by the above special case
+
+primality and FTA:
+duh
+FTA(n)'s existence clause can be proven by strong induction on n
+assuming primality and all that, very easily, since either n prime or n = ab
+
+FTA(n)'s uniqueness clause can rely on the inequality of
+finite prime strings p*p*p... = p*p*p... 
+other than cases where one is a reordering of the other
+show this with divisibility arguments and induction on the size of each string
+
+knowing the prime decompositions of a and b makes finding
+gcd(a,b) and lcm(a,b) exceedingly easy
+
+binary representations:
+different representations make different operations easy or hard,
+e.g. decimal representation is easy to add but hard to multiply
+e.g. prime decompositions are very easy to multiply but hard to add
+e.g. binary representation is reasonable to add/multiply but are large
+
+modular congruence:
+a == b(mod n) EQUIVALENT n|(a-b)
+usually, write with 0 <= b < n.
+recall aRb <=> a == b(mod n) is an equivalence relation
+aRa' AND bRb' => a+b R a'+b', and also => ab R a'b'
+
+therefore 4*5*6*7*8 mod 17 = (3)*6*7*8 mod 17
+= (1)*7*8 mod 17 = (7)*8 mod 17 = 5
+
+solving linear congruences:
+8z-4 == 5z-2 (mod 7) #additive operations are fine
+3z == 2 (mod 7) #multiplicative is not so straightforward
+inverse(3, mod 7) = 5 #modular inverses, since 3*5 == 1 (mod 7)
+z = 2*5 (mod 7) = 3 (mod 7) #complete
+
+if n is not prime, then inverse(k, mod n) might not be defined,
+e.g. it is never the case that 3k (mod 6) = 1
+
+precisely, inverse(k, mod n) is defined whenever
+k coprime n, since then Bezout's asserts EXISTS s,t , sk+nt = 1...
+sk = 1 (mod n), so s is the inverse of k
+this is called the Key lemma, after  \{20,27,34\}inverse keys.
+
+moreover, inverse is really multivalued, since
+sk mod n = (s+n)k mod n = (s+2n)k mod n = ... = 1,
+but only take the inverse that is also in 0 < s < k,
+that value is the most useful
+
+all the above means that
+az = b (mod n) has >=1 solution z iff gcd(a,n)|b
+PROVABLE by congruence's definition and Bezout's
+
+Therefore, finding inverse of z:
+az mod n = 1
+do gcd(n,z) (which must be 1 or inverse doesn't exist at all)
+and extended Euclidean gives cofactors:
+sz + tn = 1,
+and now s is an inverse of z, since sz (mod n) = , easy!
+Now of course, for mod prime p then every a has a modular inverse
+
+Cancellation of a given gcd(a,n) = 1 from
+az == az' (mod n) to z == z' (mod n)
+
+Comprehensively, to solve
+
+az == b (mod n)
+if gcd(a,n) !| b, then no solution
+if gcd(a,n) = 1, then:
+else, find s = inverse(a, mod n)
+asz == sb (mod n)
+z == sb (mod n)
+and done!
+else, gcd(a,n) > 1, then divide the whole equation by the gcd,
+into a'z == b' (mod n')
+where X' = X/gcd(a,n)
+and now gcd(a',n') = 1, solve via the inverse
+
+the total number of congruence solutions is exactly gcd(a,n),
+one for each kn/d fraction
+
+
+e.g. 6z == 22(mod 100)
+reduce into:
+3z == 11(mod 50)
+where 3 has inverse 17:
+z == 11*17 (mod 50) == 37 (mod 50)
+so in the original, z in {37, 37+50}, no more, else repeats
+
+
+
+Onto Algebra!
+abstraction into rings of residue classes
+Z_n = {[0]_n, [1]_n, [2]_n, ..., [n-1]_n}
+
+ring addition/multiplication works exactly as before
+
+The invertible elements of Z_n are Z*_n,
+immediately, [0] notin Z*, and [1] in Z*,
+Z*_n is closed under multiplication,
+the elements are exactly those that are coprime with n
+
+if n = p prime, this ring is a field,
+so every element has a multiplicative inverse,
+there are exactly the finite fields in integers
+
+Fermat's Little T:

@@ -1,0 +1,7 @@
+more congruence review
+
+refer to general congruence solving algorithm in hw5
+
+recall FlittleT
+Fermat primality test (probablistic)
+algebraic structures

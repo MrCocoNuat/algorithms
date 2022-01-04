@@ -1,0 +1,54 @@
+Dijkstra's algorithm for
+shortest single source tree
+
+condition: no negative weights in digraph
+
+Modus: build up the SS tree T from the start node
+one candidate node at a time
+The next candidate to be selected at any time
+is the one nearest to a node in R, set of nodes in T
+which must be part of the "fringe" of T, reachable in one edge
+Q = {u in V\R : (exists x in R)((x,u) in E)}
+
+Since there are no negative weights,
+the shortest path to node V
+MUST have the shortest path to every node on the path
+within it, so building the tree will give the correct answer
+
+this inspires properties and invariants of distance array d:
+for all x in R, d[x] = pathlength(s,x)
+for all x in Q, d[x] = min[y in R](d[y] + wt(y,x))
+
+func Dijkstra(V,E,wt,s):
+     #shortest distance from s to node v
+     d = {infty,infty,infty,...}
+     #predecessor of v in the SS tree
+     pi = {nil,nil,nil,...}
+
+     d[s] = 0
+     
+     R = {}
+     Q = {s}
+
+     while Q != {}:
+     	 u = v with minimal d[v] for v in Q
+	 move u from Q to R
+
+	 #explore every edge (u,v) to check for a shorter path
+	 for v in Successor(u):
+	     if d[u] + wt(u,v) < d[v]:
+	     	if d[v] = infty:
+		   add v to Q
+		d[v] <- d[u] + wt(u,v)
+		pi[v] = u
+
+     return pi
+     #pi describes the SS tree fully
+     #if pi[v] is nil, then either v = s or v is unreachable
+
+Time complexity:
+explores each node once, each edge once,
+during a node exploration it needs to find min-dist node (log),
+       since find-min will be done by e.g. a heap pqueue, total time |V|log|V|  
+during an edge exploration only constant time is needed, total time |E|
+The total time is THETA(|V| log|V| + |E|)

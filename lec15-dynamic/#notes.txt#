@@ -1,0 +1,48 @@
+Dynamicization allows the computing environment to be changed during execution
+
+almost always this means that a lookup table for subproblems is maintained for speed
+most useful in recursive problems, where subproblems may have to be solved multiple times
+
+e.g. f(n, lookup){if ans in lookup return ans; find ans recursively; stuff ans into lookup, return ans}
+but other more subtle dynamizations work too, like bounding the array search etc.
+
+
+load balancing for m=2, dynamically:
+find a subset of jobs with time closest to time sum / 2
+simplicity, a subset not exceeding tsum/2
+this general subset sum problem is NP-hard, every NP problem reducible to it
+     given [a_n], find [i] such that sum[a_i] is maximal and bounded by t
+
+subsetSumOpt(i,t):
+	#optimal sum of elements BEFORE a_i, bounded by t
+	#march backwards through [a_n] recursively
+	#either i is in the optimal set, (sSO = a_i + sSO(i-1,t-a_i))
+	#or it is not, (sSO = sSO(i-1,t))
+	#This is the Dynamic programming principle for sSO
+
+	if i == 0:
+	   return 0 #no more elements BEFORE a_0
+	if a[i] > t: 
+	   return sSO(i-1,t) #element is by itself too big to include
+	return max(sSO(i-1,t), a_i+sSO(i-1,t-a_i)) #cannot determine
+
+The tree-recursive step dooms this algorithm to exponential time,
+since NP-hard is proven it is exceedingly unlikely that
+sSO can be solved in polynomial time.
+
+
+
+
+
+
+
+dynamic:
+	Store a table of values for sSO(i,t)!
+	then in the algorithm first check whether a value exists,
+	if so return it immediately
+	else do the recursive calls
+	then before returning value stuff it into the table
+
+this doesn
+increasing n by one unit increments it
+increasing n by one unit increments it

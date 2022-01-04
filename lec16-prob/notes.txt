@@ -1,0 +1,69 @@
+randomized algorithms take random choices - some can work with pRNG, others require tRNG.
+
+These are not equivalent to probablistic algorithms
+- those with randomized inputs only, and complexity averaged over the input space.
+The algorithm itself is deterministic.
+
+Discrete prob. distribution - if universe is reals for example,
+then the sample space is some countable subset of reals.
+Finite discrete distributions have mass functions, not density functions.
+
+A uniform discrete distribution assigns Pr(s) = 1/n for |S| = n
+A single Bernoulli trial assigns Pr(1) = p, Pr(0) = q so that p+q=1 and S = {0,1}
+Finite Bernoulli trials assign Pr(10010010010) = p_10010010010, etc. and S = {0,1}* for finite strings
+These mass functions work fine for finite sample spaces, and even some infinite ones evidently
+
+Other times, and all the time for continuous distributions, density functions are necessary
+
+A different formalization for countable infinite sample spaces is:
+let 2^S be power set of S,
+then P(A in 2^S) is the probablity that s is in A
+Therefore,
+P(EMPTY) = 0
+P(S) = 1
+P(A)+P(B) = P(A or B) if A disjoint B
+
+This formalization leads to events:
+Call an event A some subset of sample space S
+and 2^S is the event space
+
+This works pretty well for countable infinite S
+HOWEVER since there is no way for 2^S to be countable (thanks Cantor)
+For some A, P(A) = 0 or P(S) cant sum to 1 (this is pretty clear)
+
+Prob. properties:
+Inclusion-Exclusion-2
+P(A or B) = P(A) + P(B) - P(A and B)
+
+Inclusion-Exclusion-3
+P(A or B or C) = P(A) + P(B) + P(C) - P(A and B) - P(A and C) - P(B and C) + P(A and B and C)
+
+Inclusion-Exclusion-n works similarly
+SUM_{1} - SUM_{2} + SUM_{3} - SUM_{4} + .....
+
+Conditionality and Independence
+
+Let P(B) > 0:
+P(s|B) = P(s)/P(B) if s in B, otherwise 0
+P(A|B) = SUM_{s in A} P(s|B)
+
+If P(A|B) = P(A) then A independent B
+Equivalently, P(A and B) = P(A)P(B)
+
+
+Example: Alice rolls 2 dice, Bob guesses a number and wins if it appears on either
+since Bob does not see the roll total, his guess is as good as random.
+The probablity he wins is 6/36+6/36-1/36, naturally.
+
+If Bob is told the roll total, this changes greatly:
+P(total=2) = 1/36, P(win|total=2) = 1/1 <guess 1>
+P(total=3) = 2/36, P(win|total=3) = 2/2 <guess 1>
+P(total=4) = 3/36, P(win|total=4) = 2/3 <guess 1>
+P(total=5) = 4/36, P(win|total=5) = 2/4 <guess 1>
+P(total=6) = 5/36, P(win|total=6) = 2/5 <guess 1>
+P(total=7) = 6/36, P(win|total=7) = 2/6 <guess 1>
+for the rest total=8-12, symmetric but <guess 6>
+
+overall probability of win is 1/36*1/1 + 2/36*2/2 + 3/36*2/3 + ... + 1/36*1/1 = 
+
+

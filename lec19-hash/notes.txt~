@@ -1,0 +1,246 @@
+optimum hashing is supremely important in the real world,
+connected to the elusivity of true randomness in computation
+
+U is a set of keys
+V is a set of hashes
+h : U -> V, a hash function
+T : V -> t, a data-retrieval function in dictionaries, e.g. an array T[]
+
+usually |U| >>> |V|
+it must be that h takes O(1) time to compute for any input in U
+
+with noncollision, i.e. with the used set of keys U' in U such that h is injective over U',
+insert search and delete are O(1) time, using a hashmap/hashtable - there is no faster possibility
+in real world, at least O(1) best case, O(1) average is possible, but not worst case at all
+
+collision ruins things here, e.g. (x != y) AND (h(x) = h(y)), this must happen in U since |U| > |V|
+
+closed-addresssing locks the slots - each data retrieval really returns a list of outputs,
+find the right one for you. Worst case this list is n-long and search now takes O(n),
+either youor hash function is terrible and has exactly one distinct output or you only have one slot,
+either way something is wrong!
+
+open-addressing locks the size of slots - collisions just place the new element in a defined somewhere-else
+e.g. linear (+1,+2,+3,+4,...) or whatever scheme
+Worst case you have to look through n slots before the data you really want, O(n)
+complicated schemes like quadratic (+1,+4,+9,+16,...) can diffuse data closer to randomly, but then
+cache locality takes a huge hit, not good.
+
+The best hash function is totally randomly determined, with uniform probability of each output
+independent of what the planned input is. (the end result must still be deterministic!)
+conveniently this also totally obscures h^-1, inverse hash, stopping adversaries optimally
+ even you will not know what h^-1 is without evaluating h directly
+this is the idea behind cryptographic hashes, as opposed to simple hashes -
+simple hashes can expose h^-1, but if SHA were to be inverted that would be really really bad
+
+note that keeping |V| reasonable also means that specific values of h^-1 are easier to crack,
+since if adversary wants 1000 keys that for sure hash to same value, just cook up 999|V|+1 hashes,
+and pigeonhole principle takes care of that
+e.g. SHA has |V| on order of 2^32, 2^64, 2^128, meaning that these operations are rather infeasible
+     but since SHA is probably a good crypto hash, there is no better way to do so
+
+example hashes:
+U =  ASCII strings
+V = {1,...,256}
+h(x) = (sum_i x_i) mod 256, taking characters' ASCII values
+this is a very simple hash that is not so good at real-world diffusion,
+e.g. h(abcd) = h(acdb) = h(bdca) = h(dcba) = ...
+
+still bad h(x) = {x_i} (as a word-integer) mod 256,
+this one only depends on last character!
+mod 257 or some other prime is much much better
+the n mod value and the m hash-space size can be pretty unrelated
+if m<n then some slots will never be used, not great
+if m>n then over-wrap happens, not great
+
+
+a cryptographic hash:
+depends on a tRNG derived l seed
+l in L, the seed space
+now you have |L| hash functions - h_l is one. Obviously this can be made harder to crack
+Importantly, there must be no better way to find out the specific l than
+trying every single h_l function! This is a hardening against adversaries.
+
+
+
+
+
+formally,
+Carter-Wegman Universal Hashing
+L = seed space
+H = {h_l}, "family" of hash functions
+notation -- m = |V|
+
+
+H is UNIVERSAL <=> (forall a,b in U)(|{l : h_l(a) = h_l(b)}| <= |L|/|V|)
+i.e. for any l, collisions happen no more than absolutely necessary
+i.e. P(h_l(a) = h_l(b)) <= 1/|V| for l uniform over L
+
+here is one universal hash family:
+dot-hash on vectors
+l in L, l = (l_1,l_2,l_3,...,l_t)
+a in U, a = (a_1,a_2,a_3,...,a_t)
+h_l(a) = (a dot l) mod m
+
+all vector elements also in Z_m, so m choices
+and m must be prime, or cant divide by c_1 later
+
+count solutions of l to a dot l = b dot l
+or c=(a-b), 0 = c dot l. Remember that c != 0
+Combinatoric proof ,let N be solution count in l:
+
+WLOG let c_1 != 0
+c_1l_1 = -sum_2^t c_il_i
+
+for every choice of l_2,...,l_t there is exactly 1 l_1 that solves
+there are m^(t-1) solutions exactly,
+notice that m^(t-1) = m^t / m = |L| / |V|,
+thus this hash is universal.
+
+
+
+Practical hashes of strings:
+keys are of length t, padded if too short
+m must be prime, or universality is iffy
+
+(n used keys)/m is the load factor
+m is dynamic - if load factor becomes too big
+then m -> 2m+fudge and rehash
+Chebyshev proved, always a prime between m and 2m
+  later implied by PNT as well
+
+fun proof, time-to-search is 1 + n/m
+
+
+
+
+
+"Classical" hashing was a regime where O(1) relied on "hashing assumptions",
+very probabilistic and not so rigorous
+"Modern" hashing relies on theorems
+
+
+
+
+review:
+A dictionary ADT can be implemented with
+
+(unordered) linked list:
+Search O(n) Insert O(1) Delete O(n)
+
+search tree, if keys are totally orderable:
+Search O(lgn) Insert O(lgn) Delete O(lgn)
+
+hash array:
+Search O(1) Insert O(1) Delete O(1)
+
+all require THETA(n) space, this is clearly optimal
+
+Static dictionaries (no insert/delete) are easy to get to O(1) search time:
+a fixed array suffices
+e.g. language keywords "private", "for", "boolean" ... all in K subset of U
+e.g. if <= 29 keys, (29 prime) then h : U -> Z_29
+e.g. one simple h is the index of the words in some arbitrary order - this is perfect
+or, h({c_n}) = (base-26 decoding of {c_n}) mod 29, then each slot can take a list of words
+
+
+"formal" Classical hashing assumptions:
+|K| <<< |U|, i.e. used keyset is much smaller than keyspace
+(Calculate h for input) in DTIME(1), i.e. hash function takes constant time
+
+Modern hashing condition:
+H subset func[U -> Z_m], set of functions from U to Z_m size m^|U|, super big
+H must be universal
+
+Equidistributing hash functions give a nearly "uniform" output frequency table
+examples include the mod hash for correct n,
+a multiplication method h(x) = floor(frac(I * x) * m) where I is irrational,
+  irrational period guarantees that the cycle will never quite repeat
+  but good rational approximations will screw this up (22/7 + <1% = pi = 355/113 + <0.001%)
+      happen when continued fraction has a low then high denominator, e.g. pi ...,1,292,...
+  never mind, use phi = 1+1/(1+1/(1+1/(...)) which has no great rational approximants
+  	continued frac ...1,1,1,1,1,1,1...
+  so can't ever be messed up that badly,
+  in practice of course use phi-1 since h takes a frac anyways and x is an integer key
+
+  formalized into Vera Turan Sus's Three Distance Theorem
+  partitioning [0,1] by frac(n*I) gives at most 3 different subsegment lengths
+  	       and frac(n*I + I) is in one of the longest segments
+
+multiplication hash:
+Expectation of [keys in a slot] <= I + 1
+do this by formalizing collision
+C_i,j = Krondelta_h(i),h(j)
+Linearity of expectation [keys in a slot] = sum_i,j (C_i,j)/[slots] or something
+      this is part of the "fun proof" mentioned above
+
+Maximum Load:
+Jensen's inequality (Var is positive) leads to some bound on maximum load too...
+
+
+relax Universal to ep-Universal
+|{l where a,b collide}| <= ep*|L|
+Universal is just ep=1/m, this independentizes it
+Expectation list length <= 1+ep*n
+
+
+review:
+universal hash family H on U to V:
+(forall a != b in U)(|{h in H : h(a) = h(b)}| <= |U|/|V|)
+Existence of an H at all is very easy -
+All functions from U to V, size |V|^|U|
+describable in |U| lg|V| bits
+but obviously that set is stupidly large and impractical
+
+better universal families -
+family of product hashes h_I(k) = floor(frac(I*k) * |V|) in Z_|V|,
+    a irrational-scale of Z_|V| int oembedding into Z_|V|,
+and dot hashes h_L[](k[]) = k DOT L in Z_|V|
+    a good hash for vector-keys (Z_|V|)^t into Z_|V|
+both of these are constant-time, since their inputs are bounded
+
+an epsilon-universal:
+Polynomial hash h_L(k[]) = k DOT [L,L,L,...,L] in Z_|V|
+    a good hash for vector keys into Z_|V|
+
+
+
+Step up from universal hashes - perfect hashes!
+lookup must be constant time, WORST CASE
+There can be no collision at all for keys in K subset U, |K| = n
+The output slots are Z_|V| = Z_m
+
+thus m >= n, at the very least
+
+start out with a universal hash h in H:
+Bound the probability of collision!
+Pr(collosion) = sumsum_(1<=i<j<=n) Pr(h_random(a_i) = h_random(a_j))
+but each individual hash collision has prob. < 1/m by universality
+so Pr(collision) < n(n-1)/2 * 1/m
+
+now let m >= n(n-1), now Pr(Collision) <= 1/2, not bad!
+but n^2 slots is a LOT of slots
+nevertheless, now there MUST exist a particular h in H
+    where there are NO COLLISIONS
+    since on average each h has less than one collision (Pr < 1)
+
+Idea:
+    Repeat until done:
+    	   take an h in sequence
+	   hash everything until collision, if collision try again
+	   if no collision, done, return h
+
+expect this to take <=2 iterations since Pr(no collision) >= 1/2,
+geometrically distributed random variable,
+so very very fast
+
+unfortunately the problem of n^2 slots is still there, too big
+
+there must be a trade-off, give away fast time for less space:
+Dual-level hash!
+
+L1 hash segregates keys into roughly even buckets of size ~X
+L2 hash applies the perfect hash to each bucket
+
+e.g. 10^8 keys separated into 10^6 buckets of 10^2 keys
+L2 then uses (10^2)^2 slots for every bucket

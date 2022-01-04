@@ -1,0 +1,75 @@
+Pqueues are priority queues
+
+Provide possible operations:
+insert(KV, priority), which inserts into the pqueue the pair KV with specified priority
+	   note that traditionally KV pairs in the pqueue do not have to be unique
+getMin() (or getMax()), which returrns the KV pair with minimum or maximum priority
+deleteMin(), which removes the KV pair with minimum priority from the pqueue
+Note that standardly there is no notion of the ordering of insertion of keys unlike queues
+
+The most likely way to implement these is with a minheap:
+review: a min-heap is a 1-2 tree where the key in each node is the minimum of all keys in its subtree
+if the heap has unique values then each node's key is smaller than all the rest in its subtree
+As well, the tree must always be nearly perfect -
+every depth is completely full except for possibly the last
+and the last depth must have all nodes as far left as possible
+As so, the number of nodes in a heap completely determines its topology and ordering
+Therefore 2^h <= n (nodes) <= 2^(h+1) remembering h starts at 0
+
+The minheap condition can be succintly stated as forall node N : key(N) >= key(parent(N))
+
+
+Insertion into a heap:
+Insert the new node N into the only available position, on the last level as far left as possible
+Then recursively reheapify: If the heap condition is violated, exchange N and parent(N)
+Continue until the new heap really is a heap, i.e. once an exchange leaves the heap condition satisfied
+then by transitivity of >= it must be true that N is in the correct place wrt to N's new children
+Optimally takes O(log n) time
+
+DeleteMin from a heap:
+take the value of the root of the heap, absolutely the minimum key
+Then move the last node N, farthest right in the last level, to the root.
+Then recursively reheapify: If the heap condition is violated, exchange N and minChild(N)
+Continue until the new heap really is a heap. This will crucially preserve the shape of the heap.
+Same time as insertion
+
+
+The extremely defined shape of the heap admits an array serialisation with index starting at 0:
+(level 0) (level 1 level 1) (level 2 level 2 level 2 level 2) (level 3 level 3 ...)
+element 0 element 1         element 3                         element 7
+
+If node N has array index k, then the children of N have indices 2k+1 and 2k+2
+and parent of N has index (k-1)//2
+
+Clearly building a heap from an arbitrary list length n of keys will take O(nlog n) time
+(tiny bit less actually, since the heap doesn't grow to log n height until half the keys are processed)
+
+But, this can be done faster with divide/conquer:
+Take the given list to be the heap array immediately,
+obviously it will most likely fail the heap condition in many different places
+Now, for each node going backwards from the end, if it is larger than its minchild swap them
+Since the trivial heap of size 1 is always a heap, each time a node is processed it becomes the root of a heap
+And, so long as a node is less than each of the root of two heaps, then the new node with children the roots will also
+be a heap if the shape condition is satisfied
+Therefore only THETA(n) time is needed to heapify a list, a marked improvement over previous
+Think of it like lazy reheapifying
+
+Heapsort: a simple fastsort,
+Build the heap: O(n)
+For all n keys, deleteMin: O(nlog n)
+that's it!
+
+
+
+Mergeable pqueues:
+must support an additional operation, merge two pqueues
+Now heaps cannot do merge in O(log n) time, since merging requires a rebuild of the heap completely
+But, 2-3 trees can reduce to O(log n) time
+These particular 2-3 trees still only store keys on leaves (in theory),
+but duplicate leaves are allowed and keys are not ordered
+Internal nodes contain guides that are the "min key values":
+	 the minimum key in its subtree
+
+Insert into this is done by creating a new leaf anywhere and updating guides
+DeleteMin is done by traversing the tree, each time to the node with guide that matches the guide of the parent
+Merge is done by the 2-3 tree join procedure, recall from lec03 notes

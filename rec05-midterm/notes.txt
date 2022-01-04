@@ -1,0 +1,43 @@
+hw4:
+
+recall heap inserts:
+insert the new key in the next spot on the complete tree,
+then float it up until it is no longer less than its parent
+tree is now heapified
+
+heapifying an array takes only linear time, don't heapify each
+element one by one but do all subtrees of a height at a time
+
+recall merging binary tree heaps
+
+merging 2-3 tree heaps is constant time if heights are the same,
+else do merging of 2-3 trees
+
+recursive 2-3 tree insert method:
+if h = 1:
+   addLeaf
+   update guides
+   return degree of node
+else:
+   c <= insert(key,correct child,h-1)
+if c = 0:
+   failed, return 0
+if c = 4:
+   split this node,
+   return 2
+
+
+q7 DFS should start from node d, remember!
+
+recall coin-gathering with general digraphs,
+first coalesce SCCs and then toposort,
+then DP backwards search
+
+a digraph of five nodes where the path that
+collects the most coins is not a simple path (contains cycle)
+is:
+a C3 graph and two extra nodes not joined to
+the same of the 3 nodes, with the path
+traveling through all 5
+
+

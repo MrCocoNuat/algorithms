@@ -1,0 +1,47 @@
+Digraph SCCs:
+
+Equivalence classes of the "exists path to and from" equivalence relation
+
+Kosaraju's SCC: total linear O(|V|+|E|):
+    Run transpose(G), O(|E|) time
+    Run toposort(G^T), O(|V|+|E|) time
+    Run DFS(G^T), but in forward toposort order,
+        This is equivalent to G^T DFS-order backwards by finish time
+	The trees are SCCs, O(|V|+|E|) time
+
+Then, G^SCC can be synthesized from that information and the cross-edges in O(|E|) time
+
+
+Rings and Fields:
+
+Rings are (S, O in S, I in S, +:S^2 -> S, *:S^2 -> S)
+    If O=I then the very uninteresting degenerate ring (O,O,O,+,*) results,
+        homeomorphic to the very uninteresting modular ring Z_1
+        customarily, O!=I is taken as a condition as well,
+    nevertheless, (S,O,+) is an abelian group
+    and (S,I,*) is a commutative monoid,
+    and * distributes over +.
+Noncommutative rings also exist in application,
+    i.e. (S, +), (S, *), or both are non-commutative
+
+Fields are rings where every element in S except O has a * inverse,
+    i.e. (S\O,I,*) is an abelian group 
+    O cannot have a * inverse since x*(y-y) = xy-xy = O != I
+
+To find the inverse of a in Z_n,
+    Use ExtGCD(a,n) to find (s,t) such that
+    	as + nt = 1, now as == 1 (mod n)
+
+
+Greedy algorithms make local optimizing decisions
+The Huffman Code algorithm creates optimal prefix-free codes for strings
+
+
+Universal hash families H on keyset K in keyuniverse U:
+(forall a!=b in K)(|{h in H : h(a) = h(b)}| < |H|/|K|)
+e.g. dot hash, irrational product hash
+
+Perfect hashing (FKS) is a O(n) space (very big coefficient, practically) way to hash
+such that O(1) time worst-case lookups are possible
+FKS only allows for static dictionaries, no insert/delete
+but it is possible to support those with more complicated perfect hashing schemes

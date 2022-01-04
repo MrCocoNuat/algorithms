@@ -1,0 +1,148 @@
+recall linear heapify array again
+it is not enough simply to go up the tree
+swapping each parent with the lowest child,
+since the "parent" may be greater than its new children
+instead each must "sink down" the whole way, until it is
+restored to a heap
+this is still linear
+
+A gap between hand-sim and computer-executed algorithms,
+data structures!
+
+Dijkstra's works well with a pqueue (ADT) that supports
+insert log time
+deleteMin log time
+decrease(re-insert with lower priority) log time
+and will take only O((n+m)logn) time
+which since edges m is at most n^2, is also O(nnlogn) time,
+usually O(nlogn) for non-ridiculously dense digraphs (planar)
+Therefore the usual choice is a binary heap
+
+interestingly, for general heaps while insert and deletemin
+are OMEGA(1), delete arbitrary is OMEGA(log n) making it
+a strictly slower operation
+
+A fibonacci heap allows
+decreaseKey to have amortized O(1) time,
+
+Dijkstra's with a linked list of nodes
+would take much longer,
+deleteMin is linear time
+insert is constant time
+decrease is linear time
+
+
+
+
+Minimum Spanning Trees
+apply to connected weighted undigraphs
+and outputs a tree that contains every node in V
+with the minimum sum of edge weights
+
+this MST is more general than the rooted tree
+common in computer science,
+it is any connected acyclic graph
+and sometimes called an unrooted tree.
+
+Several MST algos,
+
+Prim's MST:
+start with T = empty,
+while T is not connected on V,
+add the shortest edge from a node in T to a node not in T to T
+
+Implementation requires a d[] and a pi[],
+again d[v] representing immediate distance to the node from the tree,
+if no edge joins v to the tree then d[v] = infty
+and pi[v] the parent in the tree
+
+at each step, pick the minimum d[u],
+set pi[u] correctly (done in last step)
+then set d[u] to -infty (now in tree),
+and update all d[v] for v is joined to u and v not in tree
+if the edge (u,v) is smaller than d[v] set pi[v] to u
+
+eventually no node is left outside of the tree
+
+a pqueue works well for calling on the minimum d[u]
+
+Prim's can require
+|V| insert - each node gets put in the pqueue once,
+|V| deleteMin - each node needs to be picked once,
+and |E| decreases - up to one for each edge to a decreased node,
+in total O(|E|log|V|) time
+
+
+Kruskal's MST:
+start with T = empty,
+while T is not connected on V,
+add the shortest edge from E that doesn't connect two nodes already connected in (V,T) to T
+
+initialize an aray of edges sorted by weight, then scan through 
+accept an edge when it connects unconnected components,
+reject when both ends are the same connected component
+
+the ideal data structure for finding whether an edge is in T
+is the disjoint-set or union-find data structure, which is
+extremely fast (practically O(1) time) for:
+makeSet(u) O(1), make a new set {u}
+union(u,v) O(ack(n)), union the sets containing u and v
+	   should see whether find(u) = find(v) first, then do nothing
+find(u) O(ack(n)), find the "representative" of the set containing u
+	each
+
+Kruskal's says first makeSet(v) for all v,
+for all edges, accept an edge if find(u) != find(v)
+	  and then union(u,v)
+reject otherwise
+once |V|-1 accepts have gone through (T has that many edges), tree is done
+
+disjoint-set needs specific structure to achieve time bounds
+with no structure on top of trees, m ops on n items can take O(mn)
+
+each set is a very short, very wide tree, each node points to parent
+the representative of a set is the root
+finds will traverse the tree upwards, then should compress the path
+by making each traveled through node's parent the representative itself, shrinks tree
+
+Also, unions should always attach the root of the smaller tree to the root
+of the larger tree to somewhat autobalance trees
+Alone, balanced union reduces worst case operation time to O(m logn)
+since now trees can never have more than 2^ht nodes, or ht <= lg nodes
+
+With balanced union and path compression, time is amortized O(m log*n),
+log*n is iterated log base 2, how many logs reduce n to 1 or less
+since now trees after a find will have nearly constant bounded height 
+log*n = 5 when n = 2^65536, log*n = 6 when n = 2^2^65536, very large
+
+Now Kruskal's needs O(|E|log|E|) to sort edges
+and O(|E|log*|V|) to decide whether to accept or reject |E| edges
+so just O(|E|log|E|) = O(|E|log|V|) time, remember |E| <= |V|^2
+
+asymptotically this is the same as Prim's
+practically, Kruskal's is sometimes faster than Prim's when graph is sparse
+usually Prim's is faster for dense graphs
+
+At any rate, for a tree, |E| = |V| - 1, so
+the node-adding loop can be terminated when that is true
+
+
+
+
+generic MST:
+start with T = empty,
+while T is not a MSTree,
+add a safe edge wrt E\T from E to T
+"safe" depends on the algorithm
+
+
+Cut lemma:
+one way to define edge safety is:
+let A be a subset of the edges of some MST
+and C is a cut of G that respects A, crossing no edges in A
+e is the smallest edge in E that crosses C,
+then e is safe wrt A
+
+
+A MST must include one of the shortest edges in the graph
+otherwise 

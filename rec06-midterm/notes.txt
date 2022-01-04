@@ -1,0 +1,51 @@
+reviewing 2 undigraph MST algorithms:
+
+in any tree T = (V,E), |E| = |V| - 1
+
+Prim's selects shortest edge from T to node in fringe,
+just like Dijkstra's (which must consider whole path from u to fringe) but for undigraphs,
+using pqueues for fast deleteMin node from fringe set
+
+Kruskal's selects shortest edge not intra-component, using disjoint-set for optimal time
+when finding whether two nodes are in the same connected component,
+then if not, union the two components
+
+both can reach O(|E|log|V|) time using the listed datastructures
+both need arbitrary choices for initial node and
+when multiple edges are shortest, therefore non-unique solutions
+
+
+midterm study guide:
+
+Makefile--
+default: <target>
+<makeArg>=<defaultValue>
+<target> <alias> <alias>:
+	command ${<makeArg>}<commandArg>
+<target> <alias>:
+	command
+	command <commandArg> <commandArg>
+
+remember the difference between
+ADT: priority queue
+key deleteMin()
+insert(key)
+
+and
+datastruc: heap stored as an array
+key deleteMin(){
+..........
+}
+insert(key){
+..........
+}
+
+for an n-ary heap indexed starting at 1,
+parent has address floor[i/n], children are at di+0, di+1, di+2,..., di+(d-1)
+
+
+how to merge 2-3 trees, such that maxkey(T1) < minkey(T2)
+if same height easy, newRoot and guide
+if not (WLOG T2 is taller), go to leftmost child path of T2
+until remaining height is equal, then add
+T1 root as a child of T2 node, then split upwards/reguide as necessary

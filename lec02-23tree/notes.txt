@@ -1,0 +1,32 @@
+Families of trees must be closed under insert, delete
+e.g. perfect trees are not a a tree family
+
+since there must be at least one family member for each size
+
+for any a-b tree, naturally
+log_a(leaves) <= height <= log_b(leaves)
+
+Deletion policies, since there is sometimes a choice between
+adoption from a sibling with 3 children and merging with a
+sibling with 2.
+
+Useful augmentations:
+
+what if number of leaves in subtree is stored at each internal
+node as well? enables queries like "how many keys < X?" and "what is 4th smallest key?"
+
+range operations:
+
+tree join/split:
+Join (T1,T2) both 2-3 trees efficiently, condition key(T1) <ke7(T2)
+if heights  h1 = h2, put both on a common root, done.
+If WLOG h1 < h2, then find the leftest node p in T2 height h1+1,
+then add root1 as the leftest child of p, then insert ras normal
+this costs O(logn) as usual
+
+Split(T,x) >=> T1 T2 : key(T1) <= x, key(T2) > x
+take every single subtree necessary, i.e. wholly less or greater than x 
+
+and join each set in sequence (nondecreasing height) so that
+it is still efficient, i.e. each join takes very little time
+since joins join trees with very similar height

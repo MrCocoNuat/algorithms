@@ -1,0 +1,87 @@
+consider polynomials f,g in (ring R)[x]
+
+naively, let n = max degree:
+f+g in O(n)
+coefficient vectors are added termwise, of course carryless
+
+f*g in O(n^2)
+double-traverse coefficient vectors for each output coefficient for degree d
+need a bunch of integer multiplications in O(m^2), m is coeff size - assume bounded?
+
+Karatsuba already gives O(n^lg3) for poly multplication,
+replacing splitting integer in half by size by
+splitting the coefficient vector in half, same idea
+
+theoretical lower bound for integer multiplication
+gives O(n*lgn) for related poly mult, but is certainly galactic
+and probably doesn't work the same at all
+
+A much more practical O(n*lgn) algorithm exists for polynomials:
+apparently only works in (field F)[x]
+
+Polynomial evaluation <- inverse -> interpolation:
+evaluate f(p_0), f(p_1), ..., f(p_n) all distinct
+the evaluation vector containing all of (p,f(p))
+uniquely determines a degree n polynomial by Lagrange interpolation
+
+To multiply polynomials fast:
+let f,g such that def(f) + deg(g) = n (can be <n, with n = 2^a for easy halving)
+evaluate f,g at n points, create (f(p0),f(p1),...,f(pn-1)) and (g(p0),p(p1),...,g(pn-1))
+	 this step takes (n*lgn) time by FFT,
+multiply eval vectors termwise,
+	 this step takes constant time since who cares, just bound coefficients
+interpolate fg from the composite vector,
+	 this step takes (n*lgn) time by FFT (inverse),
+
+This cannot be done with arbitrar selections of points!
+
+write a Vandermonde matrix V:
+[f(p_i)] = [[ p_i^0  p_i^1  p_i^2  p_i^3 ... p_i^(n-1)]] [a_i (coeffs)]
+but generating p_i^j over and over again can be very slow,
+mat-vec multiplication will take O(n^2)!
+no matter, let p_i = wn^i, the i-th power of the (first primitive n-th root of unity)
+remembering that n = 2^a, this root is easy to find, and being the first it is primitive
+
+
+
+crazy extra:
+defining the roots of unity in a finite field, e.g. nonzero Z_17 for n=16
+(1,6,2,12,4,7,8,14,16,11,15,5,13,10,9,3) all powers of w = 6
+this won't work if n+1 is not prime, like 8+1, but when it does, integers suffice!
+
+
+FFT:
+f in F[x], = sum_i a_ix^i, degree <= n = 2^k
+find f_even, f_odd, the even/odd coefficients, grafted onto (x^0,x^1,...,x^(n/2))
+DON'T keep coefficients with their own powers, always "collapse" them low.
+now f = f_even(xx) + xf_odd(xx)
+Using wn^i as the input,
+WHAT'S IMPORTANT: f(w^i) = f_even(w^2i) + w^i f_odd(w^2i)
+of course, use recursion to evaluate f_even, f_odd
+
+This is the essence of the FFT:
+input coefficient vector [a_i] length <=n
+      first n-th root of unity w
+output evaluation vector [c_i]
+
+if n = 1:
+   return a_0 #constant
+[outputs_even] <- FFT((a_0,a_2,...,a_n-2), w^2)
+[outputs_odd]  <- FFT((a_1,a_3,...,a_n-1), w^2)
+[outputs] <- recombine([even],[odd]) #do via the important equation
+return [outputs]
+
+T(n) = 2T(n/2) + n, T(n) = n*lgn
+
+
+
+This pretty much solves the evaluation problem in n*lgn time,
+next is multiply ints (easy, bounded coefficients since unrelated to n anyways)
+then interpolation problem: inverse FFT!
+find the inverse Vandermonde matrix, then another mat-vec multiplication
+that is solved pretty much exactly by the FFT as well, just a different f
+
+inverse Vandermonde is super easy too,
+V^-1 = 1/n * V[replace w with w^-1], possible since w is in a field
+
+Therefore multiplication of polynomials can be done practically in n*lgn time

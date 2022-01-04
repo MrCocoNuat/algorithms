@@ -1,0 +1,69 @@
+The most typical graph is a set of sets V and E, V being the set of vertices
+and E the set of edges between those vertices, a subset of (E x E)
+
+Directed graphs are those where (a,b) and (b,a) are distinct edges, i.e. E is a set of tuples
+Weighted digraphs can additionally assign a weight w to each edge, i.e. (a,b,w)
+or assign weight w to each vertex, i.e. (v,w), but this is comparatively less common
+
+Additional typical axioms:
+(a,a) cannot be in E, i.e. E is a subset of (ExE) - Diag(E), the diagonal product
+Not a multigraph, i.e. E is a set, not a multiset,
+
+Pretty much all graphs in this course are directed
+
+(v,w) in E means w is a successor of v and v a predecessor of w
+
+There are many ways to implement graphs:
+sparse graphs are likely represented as an array indexed over V, with each a pointer
+to a linked list of the successors of each vertex, space O(|V| + |E|) = O(n+m)
+Useful if m is much smaller than n^2, most common digraphs
+
+dense graphs are likely represented as an adjacency matrix of bools indexed over VxV, so that
+iff the entry A[v][w] is true, then (v,w) in E, space O(|V|^2) = O(n^2)
+only really useful when m is about n^2, or close to a complete digraph
+
+Rarely, a set of edges can be maintained, but this can become slow fast, space O(|E|)
+
+These all assume that the keys of vertices can be mapped to integers, preferably 0,1,...,n-1
+which is usually easy enough anyways...
+
+Paths are lists of edges, such that the successor vertex of one edge is the predecessor of next
+If none of the vertices in the path are the same then the pah is simple
+If the path exists at all from w to v, then w is reachable from v
+If the path has the final node the same as the first, then it is cyclic
+
+DAGs are directed acyclic graphs,
+i.e. each edge has a direction and there are no cycles
+Topological sorts always exist on DAGs:
+order V, so that (vi,vj) in E implies i < j
+
+If the graph was not directed, then it would be impossible to define a sort since both
+vertices on a edge are equivalent
+If the graph was cyclic, then it would be impossible to define a sort since the > relation
+is transitive and never reflexive
+
+For any given DAG a topological sort may not be unique
+
+The general algorithm TSORT(G) returns a list of vertices in the DAG G
+satisfying the topological sort,
+or raises an error that the input G is not actually a DAG.
+
+There are many applications for this kind of sorting, e.g.
+vertices can be tasks, and
+an edge indicates a dependency of one task on some other task being complete
+A topological sort would be one way to do all tasks such that
+none were attempted before having all dependencies completed
+
+Real-world applications include
+software packaging/delivery (dependencies between libraries for building)
+spreadsheet evaluation (dependencies between cells for evaluation)
+PERT networks (a concrete example of task dependency)
+
+Prove that TSORT is complete, i.e. can always give an answer.
+Or that iff digraph G is DAG, G has a toposort
+It is easy to show that digraph G with a toposort must be a DAG
+To show that all DAGs have a toposort, use induction on n
+for n=1, the only DAG (no selfloop) is I_1 or the isolated graph on one node
+    clearly that has a toposort
+Assume that every DAG of n-1 nodes has a toposort.
+

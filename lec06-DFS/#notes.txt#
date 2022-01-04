@@ -1,0 +1,87 @@
+CLRS is a standard text on algorithmics
+
+DFS - Depth First Search traversal of a graph,
+algorithm "visits" all nodes "reachable" from a given node
+
+Consider a (di)graph G and node u in G
+assume stored as adjacency list
+
+func DFS(u):
+     mark u as visited
+     for v in Successor(u):
+     	 if not visited v:
+	    DFS(v)
+remember to maintain a call-stack for hand simulation
+
+Very simple to write and understand,
+but the hidden utility in the visited metric is very powerful
+The same idea can be used in a myriad of contexts
+
+Of course, simply visiting every node is not useful by itself,
+usually something is done in each call of DFS to the node u,
+e.g. adding the key of u to the running total, or simply printing key
+Therefore it is very important to ensure no multiple-visits ever happen
+otherwise bad things like infinite loops could occur
+
+In a BST, visiting-from can be defined, different for in/post/preorder.
+This is not so for more general graphs that lack parent-child structure
+
+Note that this implementation of DFS does not visit all edges,
+especially clear when the digraph is not a DAG. 
+This happens when the upcoming successor node is already visited
+
+In fact, the edges that are visited form a tree, the DFS tree
+and a special tree at that, the same as a general search tree
+The extra edges can fall into back, forward, or cross,
+depending on the relation between their from and to nodes
+
+DFS as implemented runs in O(|V| + |E|) linear time
+As long as time spent verifying a node is visited is O(1) time
+
+Of course, a digraph may not have every node reachable from every node
+and so DFS can miss some nodes
+
+In some more sophisticated uses of DFS, it is necessary to "visit"
+a node more than once, only marking it truly visited after the last time
+it is accessed.
+
+
+v is visited <=> v is reachable from u
+=> is clear, since the algorithm follows only possible paths
+<= is a little harder,
+consider the path u=v0 -> v1 -> v2 -> ... -> vk
+ for k=0, then clearly the whole path is marked visited, it is just u
+ assume that k= i-1 is proven already, then the node v(k-1) is visited
+  but then vk is in Successor(v(k-1)) it for sure will be visited
+
+FullDFS: solves the problem of quasidisconnected graphs not being
+traversable through basic DFS:
+
+Include
+array pi[], indexed over each node v, the parent of v in the DFS forest
+array color[], same, values of unvisit,seen,visit (pick color names)
+each node has a discoveryTime and finishTime
+     the time first seen, and the time marked visited
+
+func DFS(G):
+     for each v:
+     	 v <- unvisited
+	 pi[v] <- nil
+	 time <- 0
+     for each v:
+     	 if v unvisited:
+	    DFSR(v)
+
+func DFSR(u):
+     u <- seen
+     dTime[u] <- ++time #discovery
+     for each v in Successor(u):
+     	 if v unvisited:
+	    pi[v] = u
+	    DFSR(v)
+     u <- visited
+     fTime[u] <- ++time #finish
+
+Since this creates a DFS forest, then there is another type of
+extra edge, the crosstree edgeFor sure, every single node v will be visited by the end,
+and the pi array will give the DFS forest

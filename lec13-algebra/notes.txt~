@@ -1,0 +1,28 @@
+Rings are tuples (R,o in R,i in R,+,*) abbreviated to R such that:
+(forall x,y,z in R)(x+y=y+x AND x+(y+z)=(x+y)+z AND x*y=y*z AND x*(y*z)=(x*y)*z)
+	- commutatitivity and associativity of +, *
+	- (R,o,+) is a group
+AND (forall x in R)(o+x=x) AND (forall x in R)(exists n in R)(x+n=o)
+    	- identity and inverses with +
+AND (forall x in R)(i*x=x)
+    	- identity with *
+	- (R,i,*) is a monoid
+AND (forall x,y,z in R)(x*(y+z)=x*y+x*z)
+    	- distributions of * over +
+	
+customarily, insert the additional axiom, NOT (i = o), for convenience.
+
+Rings include familiar sets of numbers (and the customary operations +,*) Z, Z_n, Q, R, C
+The trivial ring ({k},k,k,+,*) which is extremely boring,
+
+These give easy ring theorems that look like arithmetic theorems
+
+Some elements in some rings may have inverses with *:
+Define R* to be the set of elements in R for which they have a * inverse in the ring,
+i.e. R* = { x in R | (exists y in R)(x*y=i)}
+R* is closed under *
+
+For those rings where R* = R\{o}, (R,o,i,+,*) is additionally a field, sometimes abbreviated to R itself.
+Note that since (forall x in R)(o*x=o), o notin R*
+
+The familiar sets of numbers Z_p, Q, R, C are fields

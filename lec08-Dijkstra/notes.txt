@@ -1,0 +1,30 @@
+finding shortest paths from u to v through a digraph is an obviously relevant problem
+
+each edge can have a weight attached to it,
+then shortest means the minimal sum of weights of edges on path
+
+Nonexistent u -> v has weight = infty
+
+For useful shortest paths, there must be no negative-sum cycles in digraph
+else every single shortest path in that component will be -infty, taking cycle infinitely many times
+Also, any shortest path does not contain a positive-sum cycle, since it can be cut out to be shorter
+A shortest path can have 0-sum cycle, but can also cut it out,
+therefore there is always a shortest path between nodes with no cycles
+
+
+In a digraph, there are a couple of shortest path problems to solve:
+single source - find shortest paths from fixed node v to every other node
+single destination - duh
+single pair - single shortest path from u to v
+all pairs - find shortest path from every u to every v
+
+Single source path tree -
+A tree including one special node S, so that every shortest path from S to another node is in the tree
+in some contexts called a shortest spanning tree of some digraph
+
+implementation:
+pi[] indexed over v, stores predecessor of v in the tree
+d[], same, stores shortest distance from S to v
+
+Dijkstra's algo can find these, but the digraph cannot have negative edges at all
+

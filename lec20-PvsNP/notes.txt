@@ -1,0 +1,133 @@
+Algorithms have time complexities describing asymptotic resource usage
+according to input problem size
+
+Does each problem have an inherent complexity, the fastest ANY algorithm
+solving it could ever be? Intuitive it seems so,
+i.e. showing primality of an integer
+ought to always be easier than prime factorization of an integer,
+one can be REDUCED to the other.
+
+
+
+Models of computation describe how a decision problem can be solved
+e.g. comparison trees, circuit diagrams, Turing machines
+
+
+Up Chomsky's grammar hierarchy:
+
+FSM is a finite automaton, each node with its own rules.
+Its input is a finite string of symbols, each one read by the current node
+control passes on to the next node depending on the symbol.
+Start node and terminal accepting node(s) are special.
+If computation stops with no more symbols in the string, and the automaton
+in the final accepting state(s), this string is accepted.
+Computable problems include:
+  	   are there exactly 6 A's in ths string?
+	   Is the count of A subtract the count of B divisible by 5?
+	   Is this string part of this REGULAR LANGUAGE?
+
+Pushdown automaton extends the FSM with an infinite stack to use,
+pushing and popping single symbols are added to rules.
+Computable problems include:
+	   Is the count of A subtract the count of B equal to 0?
+	   Are these parentheses correctly nested/paired?
+	   Is this string part of this CONTEXT-FREE LANGUAGE?
+
+Turing Machine is one example of the most general models, consisting of
+  a (single, for a SimpleTM) doubly infinite tape, a huge extension of the stack
+    moreover this tape can start with a program input ALREADY ON IT
+    	     usually the length of this input is deemed the input size
+    moreover "popping" off the stack DOES NOT DELETE ANYTHING
+  single tape head, finite alphabet, and finite ruleset (like an InfiniteSM !!)
+  In each timestep, the head reads the symbol under it,
+     decides which rule(s) to follow based on the ruleset
+     possibly rules tell head to move left or right once, then repeat
+Computable problems include:
+	   Everything that is computable, including
+	   Is this string part of this UNRESTRICTED LANGUAGE?
+
+Church's thesis: there is no more general model, every decision problem
+solvable at all is solvable by a TM. No claims are made on resource usage.
+
+
+
+Measuring time taken by a TM to solve a problem is now very useful.
+
+Complexity CLASS - not a set in general (fails ZF)!
+DTIME(X) and NTIME(X) describe problems solvable in X time by DTM, NTM
+DSPACE(X) and NSPACE(X) are similar, but according to space instead
+
+reduction: A reduces X-time to B implies that if B is solved,
+additional time X means A is solved
+
+These nonprobabilistic classes describe problems
+where the answer returned must be YES or NO, and
+must always be totally correct. DECISION PROBLEMS
+can always be reduced constant-time to OPTIMIZATION PROBLEMS -
+does the optimal solution returned fit the criterion?
+Therefore, solving the optimization problem also solves the decision.
+
+It turns out that Decision in P EQUIVALENT Optimize in P, surprisingly
+Optimization log-time reducing to decision usually involves binary search
+e.g. for "is this the smallest possible answer?" 
+
+Other classes relax one or both sides of the answer,
+allowing maximum probability of error, allowing for
+quantum computetation, etc.
+
+
+P - CLASS of (decision) problems solvable by a DTM in polynomial time
+  i.e. = Union_k DTIME(n^k)
+     "easy to solve"
+  Sample problems:
+  	 Primality - is n prime? (DECISION)
+	 Gaussian Elimination - What is the solution to this linear equation system?
+	 	              - Is this a solution vector? (DECISION)
+
+HERE BE COBHAM'S THESIS LINE - TRACTABILITY EQUIVALENT TO P
+
+NP - CLASS of (decision) problems solvable by a NTM in polynomial time
+   - all also solvable by DTM in singly exponential time
+     since nondeterminism only gives a single exponential speedup:
+     	   just check every single computation path, exponential bounded number
+   - all also verifiable by DTM in polynomial time
+   i.e. = Union_k NTIME(n^k)
+     "hard to solve, easy to check"
+   Sample problems:
+   	  Scheduling - what is the optimal way to pack these n jobs among k machines?
+	  	     - is it possible to pack these into k machines? (DECISION)
+	  Bin packing - how many fixed bins are needed to pack these n objects?
+	              - possible to pack into this many bins? (DECISION)
+	  Knapsack - what is the optimal-utility set of goods that can fit inside this bag?
+	  	   - Is there a k-utility set that fits? (DECISION)
+          Traveling Salesman - what is the shortest wgraph cycle that visits all n nodes?
+	  	    	     - is there a wgraph cycle of shorter than k? (DECISION)
+	  Satisfiability - Is there an assignment of boolean variables making this sentence true? (DECISION)
+	  
+R - CLASS of (decision) problems solvable by a DTM in finite time
+  "possible to solve", by Church's thesis (forall computer Z)(R_(TM) superset R_(Z))
+  Sample problems:
+  	 Ackermann - Is A(n,n) = m? (DECISION)
+  
+ALL - CLASS of (decision) problems, unrestricted
+    Includes totally impossible to solve problems
+    Godel's 2nd implies that R != ALL, some problems are unsolvable
+    this is due to uncomputable functions
+    Sample problems:
+    	   CH - Is there a set having cardinality between that of N and that of R? (DECISION)
+	   Halting - Does this program p eventually halt with the input "0"? (DECISION)
+	   
+subclasses of NP:
+
+NP-Hard - SUBCLASS of problems in R, that can be
+	reduced to from any problem in NP in polynomial time
+	"At least as hard as any problem in NP", note that NP-hard NOTsubset NP
+	Proving any of these is in P proves P = NP,
+	but this is a class much much larger than:
+
+NP-Complete - SUBCLASS of problems in NP, that can be
+	    reduced to from any problem in NP in polynomial time.
+	    "Just as hard as any problem in NP", note that NP-hard superset NP-Complete subset NP
+	    Proving any of these is in P proves P = NP
+	     
+	    

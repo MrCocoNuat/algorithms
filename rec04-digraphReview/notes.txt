@@ -1,0 +1,23 @@
+Recall implementations of digraphs,
+adjacency list vs adjacency matrix/hashmap
+
+Recall toposort algorithm, at each step pick out one node with in-degree 0
+at the beginning find the in-degree of all the nodes by linear sweep of V,E
+then each node removed from the graph, sweep over its successors to decrement in-deg
+whenever a new node reaches in-deg 0 push it onto list of pickable nodes
+
+Recall basicDFS algorithm,
+push successors of each popped node onto the stack as long as they have not been marked visited by popping
+record the predecessor of each popped node to obtain the DFS tree
+
+complete DFS algorithms also record discovery (first seen) and finish (no more successors to visit) time ticks
+and can deal with unconnected digraphs, producing a DFS forest
+and parenthesis theorem for DFS trees can be used to classify edges in and not in DFS tree
+
+Tarjan's algorithm finds toposorts by creating a DFS tree,
+if it finds a backedge then there is a cycle, but this time it knows what nodes are in the cycle
+
+Kosaraju-Sharir to find SCCs of a digraph, by doing two DFS operations
+the first orders vertices in finish time
+the second DFSs "backwards", from latest finish time, to cut off one SCC after another from G
+proof of correctness is in notes

@@ -1,0 +1,45 @@
+Useful classes to define the asymptotic (usually n -> infty) behavior of functions:
+
+O(f) is the class of functions that does not grow faster than f
+OMEGA(f) is the class of functions that does not grow slower than f (Knuth's definition)
+o(f) is the class of functions that grows slower than f
+omega(f) is the class of functions that grows faster than f
+THETA(f) is the class of functions that grows just as fast as f
+~f is the class of functions that grows exactly as fast as f (quite rare especially in CS)
+
+apparently all of these classes can be proper classes? interesting
+
+for f to grow faster than g is equivalent to f/g approaching infinity
+growing slower is equivalent to f/g approaching 0
+growing just as fast is equivalent to f/g approaching some finite x
+growing exactly as fast is equivalent to f/g approaching 1
+
+Most precisely: for f to be in O(g) where f,g are R->R and defined on some unbounded interval [k,infty):
+(exists c in R+)(exists n0 in [k,infty))(forall n >= n0)(|f(n)| <= c|g(n)|)
+so reading right off the definition, f does not grow faster than g up to a constant multiplier
+
+we usually take the input n in f(n) as the number of bits in the input, i.e. input size
+and the property of interest f(n) can be instructions, time taken, memory, other finite resources...
+most common of all is time - it cannot be purchased!
+
+pain point: an algorithm with O(f) time is faster than algorithm with O(g) time => f grows slower than g
+double usage of "fast", as taking less time, and generating larger terms!
+
+gee, literally everybody likes coopting the succession/precession operators
+
+Also in a staggeringly obtuse abuse of notation rivaled only
+by the use of the = operator in many programming languages as assignment and not equality,
+f in O(g) is usually rendered as f = O(g)
+Deal with it.
+
+Clearly using these definitions, O(f) = O(g) as long as THETA(f) = THETA(g)
+
+TECHNICAL NOTE:
+	  sometimes it does not suffice to define O(g) as the class of functions f where f/g -> k < infty
+	  consider functions that do not have limits at infinity,
+	  e.g. it would please anybody to say that sin = O(1), and yet the limit of sin(n)/1 at infty does not exist!
+	  in these cases it is better to take the limit supremum of |f/g| -> infty, which if f = O(g) will exist.
+
+For most cases of f(n) that involve only multiplications of n^k, log(n)^k, e^kn,
+the general ordering exp > poly > log suffices for a lexicographic order that is also correct.
+

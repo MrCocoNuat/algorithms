@@ -1,0 +1,58 @@
+2-3 trees are STs, balanced, but not necessarily binary
+
+STs can be grouped in families ST_k
+where all trees in the family with size n have height of at most k*log_2(n)
+All AVL trees would be in family ST_1.44ish, provably
+
+review:
+balanced STs are those where every node has property:
+|height(L) - height(R)| <= 1
+i.e. height of two subtrees differs by at most 1
+
+A tree in family ST_k has each operation (insert search delete) will take O(log_2(n)) time
+since each might require searching through the whole height of the tree
+
+
+Lifting of the binary requirement creates different trees:
+
+In 2-3 trees,
+key-value pairs are only stored at leaves, duplicate keys among these are disallowed - this makes a tree external
+	  An external binary tree would have many extra nodes,
+	  but allowing 3 children restores the logarithmic height
+all leaves are at the same depth
+each internal node has 2 or 3 children
+each node copies the value of the maximum key in its subtree, called a guide
+from left to right, the leaves' keys are sorted
+
+To search through such a tree, at each node take the leftmost child that has a guide value
+that is at least the search key
+
+2-3 trees, with at least 2 children for each node, are part of the restrictive family ST_1,
+i.e. no 2-3 tree of n nodes has height more than log_2(n)
+
+To insert a node, search to the last internal node,
+then add another child. If the node now has four children, split it up into two nodes each with 2 nodes
+This will add a child to the parent node - repeat one level up until done
+If at any point the root has 4 children split the root into two nodes and create a new root with both as children
+   this increases the height of the tree by one
+At every level update the guide key of each node
+
+To delete a node, search to the last internal node,
+then delete the child. If the node now has one child, take the adjacent child from a sibling with 3 nodes
+If no sibling has 3 children then take a sibling with 2 children and give the child node to it, deleting the node.
+This will subtract a child from the parent node - repeat one level up until done
+If at any point the root has 1 child delete it and make its child the new root
+   this decreases the height of the tree by one
+At every level update the guide key of each node
+
+The huge advantage of this tree in the face of the fact that it might require double the space is that
+the tree is always perfectly balanced, so the same set of data can be organized by many trees at a time
+e.g. employee records sorted by age, experience, salary,... all at the same time
+
+A generalization of the 2-3 tree is the a-b tree with each node having at least a and at most b children
+2-2 trees are BSTs and can't always be perfectly balanced
+n-(2n-1) trees are in general B-trees, e.g. 8k-(16k-1) trees commonly found in the real world,
+	 and can always be perfectly balanced, but require slightly more complex algorithms for insert/delete,
+	 and guide keys stored as a list of separators in each node for faster access and comparison
+
+

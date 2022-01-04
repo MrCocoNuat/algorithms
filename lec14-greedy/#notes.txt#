@@ -1,0 +1,86 @@
+Optimization by greed is a local process,
+looking for local optimums might give the global minimum,
+or it might not, but maybe it is not so bad,
+or the local optimum found really is terrible.
+Different problems are different.
+
+Greedy algorithms never backtrack, limiting the running time sharply.
+Scheduling problems often get these applied,
+
+e.g. Load Balancing:
+m identical serial processors take on n jobs with each job j_n taking t_n time
+The jobs must be completed contiguously, and only on one machine
+Minimize the maximum load ono any processor in terms of time.
+
+Let m = 3,
+times are (2,3,4,6,2,2).
+
+Intelligently, the total time is 19, so the maxtime will never be less than 7.
+However, there is no way to attain a maxtime of 7 since only one odd-time job exists,
+so 8 time is necessary for everything to finish.
+
+A simple algorithm:
+assign the jobs to processors in order (1,2,3,1,2,3,1,2,3,1,2,3,...)
+This happens to give a maxtime of 8, but obviously this in general won't be nearly optimal.
+Clearly this takes O(n) time
+
+A greedy algorithm:
+assign the next remaining job to the processor with lowest load,
+giving the allocations (1,2,3,1,2,3) coincidentally.
+This also gives a maxtime of 8, and conceivably should do better than the simple algo.
+
+for each m:
+    T_m <- 0 #load for each machine, add key to pqueue T
+    T.add(T_m)
+    J_m <- {} #jobset for each machine
+
+for each n:
+    nextMachine <- T.extractMin() #use a pqueue!
+    J_m.add (j_n)
+    T_m.increaseKeyBy(t_n) #sinkdown, log m time
+
+This takes O(m + nlogm) time
+
+An input for which this fails is easy to find:
+m=2, t=(2,3,5). The minmaxtime is easily seen to be 5,
+however the greedy algorithm will clog up one machine with 7 time.
+
+However, this greedy algorithm is never going to be that terrible;
+let t* be the minmaxtime, then maxtime with the greedy algorithm is at most 2t*.
+Lemma 1: minmaxtime >= max t_n, obvious since the longest job has to be run by something
+Lemma 2: minmaxtime >= average t_n, obvious since the most equal distribution has all avg times
+...
+
+This algorithm can be imporved somewhat,
+for example sorting the jobs by decreasing processing time cuts the worst case to 4/3*minmaxtime
+in fact, finding an allocation with (1+epsilon)*minmaxtime is in P for any positive epsilon
+However, finding an allocation with 1*minmaxtime is NP-complete for any m>1, surprisingly.
+	 This means that almost surely no P algorithm exists for this, since that would
+	 automatically generate a P algorithm for every NP-complete problem.
+
+For this problem, a greedy algorithm provides a practically tractable solution.
+
+
+Huffman Encoding:
+T is some bintree, w_i are the nonneg weights of nodes in T up to w_n.
+Define Cost(T) = sum w_i*d_i where d_i is the depth of node i.
+Minimise Cost(T) given w_i.
+
+Clearly T must be full bintree if n>2, that is easy enough,
+(if not, then there is a free lower-depth spot for some higher-depth node).
+
+This has applications in prefix-free coding, Huffman coding,
+replacing node keys ("a","b","c","d",...) with bit codes (00,11,101,...)
+such that no code is a prefix of another, so each string is unambiguous.
+Clearly, short codes should go to frequently used keys to minimize string length.
+
+Weight each key according to its frequency, and do the tree cost minimization problem.
+The keys must only be at the nodes, so none is a prefix of another; T additionally contains 0-weight internals.
+T is a bintree in the most literal sense, leftchild is appending 0 and right is appending 1.
+For example, an English keyset ("e","z","d","q") might have codes (0,111,10,110) assigned.
+Prefix-nonfree codes are really bad! ("a","b") = (001,00) makes the string 00100101001011... start with an unknown!
+
+Greedy algorithm: in this application Cost(T) is sum weight*depth of leaves since internals are 0-weight.
+Start with all leaves as singleton trees, then until there is only one tree, join the two trees of lowest weight.
+Joining trees deletes one and replaces the other's weight with the sum of the two.
+O(nlogn) time where n is the number of keys, using a pqueue. There are (n-1) deleteMin and increaseKey operations

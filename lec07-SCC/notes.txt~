@@ -1,0 +1,65 @@
+in digraph G:
+
+Let relation u PATH v be true if there is a path from u to v
+Let relation u STRONGCONNECT v be true if u PATH v and v PATH u
+
+STRONGCONNECT (~) is an equivalence relation -
+it is reflexive (duh)
+it is symmetric (duh)
+it is transitive (path from u to v and v to w makes path from u to w)
+
+Note that any nonreflexive ~ means that the digraph is not a DAG
+
+Equivalence classes of ~ are Strongly Connected Components, SCCs.
+C(v) is defined as the SCC containing v
+
+Motivation: In any SCC, there is a path from any node to any node
+This is not true of CCs, where only one (or no) direction may be possible
+Remember, it is not enough to find a cycle of points to prove an SCC
+exists there, there also must be no other points that can be in it
+e.g. no outgoing or incoming edges
+
+Each digraph G now has a component digraph,
+made by collapsing each SCC into a single node:
+if G = (V,E), then G^SCC = (V^SCC,E^SCC),
+V^SCC = {C(v) for all v in V},
+E^SCC = {(C(i), C(j)) for all i!=j, for some u in C(i), v in C(j), (u,v) in E}
+
+Provably, u PATH v <=> C(u) PATH C(v) in G^SCC
+
+Provably, G^SCC is a DAG:
+if there is a cycle in G^SCC, then C(u) PATH C(v) and C(v) PATH C(u)
+implying by above, u PATH v and v PATH u, but this means u SC v
+which is a contradiction with the assumption that C(u) != C(v)
+
+full "gathering coins" problem:
+find a path among nodes such that the sum of values of each node on path is
+maximized
+this is not hard for DAGs; toposort and then linear time recursive search
+or slightly better, linear backwards search
+since problem is subproblem optimal
+
+finding the component graph of any digraph G
+and assigning to each SCC the sum of values in the SCC
+results in the equivalent problem for a DAG.
+
+In general, reducing arbitrary digraphs to component DAGs is a useful simplification
+
+
+
+Semiconnected graphs are those where (forall u,v)(u PATH v or v PATH u)
+Provably, semiconnected DAG <=> DAG has a subgraph P_n, the path digraph, i.e. in toposort u_i PATH u_(i+1)
+since an edge can only be of the form (u_i,u_(i+k)),
+so the only possible way for a path to exist from u_i to u(i+1) is the single edge itself
+
+Provably, G is semiconn <=> G^SCC is semiconn,
+clearly finding semiconn. of a DAG G^SCC is much easier, see above
+
+func SCC(G):
+implemented by Kosaraju/Sharir Algorithm,
+Find G^T, all edges reversed
+     provably, G^T^SCC = G^SCC^T
+     DFS(G^T) and order nodes in decreasing finish time
+     DFS(G), but process in order obtained before
+The DFS trees in the forest are the SCCs
+in O(|V| + |E|) time

@@ -1,0 +1,12 @@
+families of trees must be closed under insert, delete
+e.g. perfect trees are not a a tree family
+
+since there must be at least one family member for each size
+
+for any a-b tree, naturally
+log_a(leaves) <= height <= log_b(leaves)
+
+Deletion Policies, since there is sometimes a choice between
+adoption from a sibling with 3 children and merging with a
+sibling with 2.
+

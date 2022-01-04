@@ -1,0 +1,96 @@
+Dynamicization allows the computing environment to be changed during execution
+
+almost always this means that a lookup table for subproblems is maintained for speed
+most useful in recursive problems, where subproblems may have to be solved multiple times
+
+e.g. f(n, lookup){if ans in lookup return ans; find ans recursively; stuff ans into lookup, return ans}
+but other more subtle dynamizations work too, like bounding the array search etc.
+
+
+load balancing for m=2, dynamically:
+find a subset of jobs with time closest to time sum / 2
+simplicity, a subset not exceeding tsum/2
+this general subset sum problem is NP-hard, every NP problem reducible to it
+     given [a_n], find [i] such that sum[a_i] is maximal and bounded by t
+
+subsetSumOpt(i,t):
+	#optimal sum of elements BEFORE a_i, bounded by t
+	#march backwards through [a_n] recursively
+	#either i is in the optimal set, (sSO = a_i + sSO(i-1,t-a_i))
+	#or it is not, (sSO = sSO(i-1,t))
+	#This is the Dynamic programming principle for sSO
+
+	if i == 0:
+	   return 0 #no more elements BEFORE a_0
+	if a[i] > t: 
+	   return sSO(i-1,t) #element is by itself too big to include
+	return max(sSO(i-1,t), a_i+sSO(i-1,t-a_i)) #cannot determine
+
+The tree-recursive step dooms this algorithm to exponential time,
+since NP-hard is proven it is exceedingly unlikely that
+sSO can be solved in polynomial time.
+
+given [a_n], sSO(n,t) requires up to (n+1)(t+1) calls, since each will decrease
+(n+1)(t+1) = nt, but int t must be expressed as its size, nt = n2^(T)
+since t is NOT a size counter, but a numeric counter;
+increasing t by one unit multiplies it by 2
+increasing n by one unit increments it
+
+note that this analysis assumes dynamic:
+	Store a table of values for sSO(i,t)!
+	then in the algorithm first check whether a value exists,
+	if so return it immediately
+	else do the recursive calls
+	then before returning value stuff it into the table
+so that each subproblem really is only solved once
+else the nt figure becomes much worse
+
+of course this is a primrecursive problem,
+so converting it into iteration bottom up through the table
+is easy, no deferred computation necessary
+and now obviously filling in each of the nt cells is needed only once
+
+
+Longest Common Subsequence:
+given [a_m], [b_n] find k-length increasing sequences [i],[j] such that
+forall i,j, a_i=b_j. The problem is right in the name; maximize k.
+
+Principle:
+	traversing both sequences from 0 to the end,
+	if the current elements are the same, include them (k+=1, add to LCS[])
+	else, non-deterministically select just one to advance,
+	then take the max resulting k from both scenarios and use that LCS
+
+so,
+lcs(X,Y):
+	lcs(X,0,Y,0,0)
+	
+lcs(X,i,Y,j,k):
+	if i == X.len or j == Y.len:
+	   return k #no more elements
+	if X[i] = Y[j]:
+	   lcs(X,i+1,Y,j+1,k+1)
+	return max(lcs(X,i+1,Y,j,k), lcs(X,i,Y,j+1,k)) #treerec step
+
+of course, can traverse backwards too.
+To get the actual lcs out of the algorithm, just pass it along
+in the arguments and as part of a return tuple, max will still compare
+the k values to see which lcs to keep and return
+
+dynamic table indexed by i,j will reduce the number of subproblems to
+just mn, which results in a P algorithm. This is better than treerecursion
+Note that this is P if the number of input sequences is const
+(like now at 2, the LCS_2 problem)
+if not (the LCS_x problem), then the problem is also NP-hard, no dynamic.
+
+
+
+ordered Huffman:
+like finding a huffman code for symbols, but now the symbol BST must be
+ordered in the original order of symbols.
+The context/application is usually different, now what is important
+is looking up symbols, which justifies the orderedness and huffmanweights.
+A common use case is bespoke compiler writing for specific programs...
+
+DP Principle:
+   optCost(i,j) = S + min(optCost(i,m) + optCost(m,j))

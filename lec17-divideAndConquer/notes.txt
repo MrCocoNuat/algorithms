@@ -1,0 +1,88 @@
+DP in its usual form gives a polynomial number of subproblems:
+e.g. P_n requires solving P_n-1, P_n-2, P_n-3, ... P_1
+e.g. P_i,j requires solving P_i-1,j, ... P_1,j, P_i-1,j-1,...,P_1,j-1,... p_1,1
+
+With D&C,
+Sometimes much better algorithms can be found, logarithmic subproblems:
+e.g. P_n requires solving P_n/2, P_n/4, P_n/8,... P_1
+
+mergesort makes 2 subproblems of size n/2
+Karatsuba multiplication makes 3 subproblems of size n/2
+Generally, some algorithm might make a subproblems of size n/b
+
+mergesort calls mergesort on first half and second half
+then merges the results in linear time giving it its time of n * lg n
+which is the information-theory provided lower bound on comparison sorting
+
+Naturally these models and algorithms give rise to slightly more
+complicated recursions e.g. T(n) = 2T(n/2) + THETA(n) for optimal mergesort
+of course n*lg n solves for T(n):
+n*lg n = 2(n/2*(lg n - lg 2)) + THETA(n) = n*lg n - n*lg 2 + THETA(n), exactly correct
+
+mergesort is stable, but using arrays, can't be done efficiently in-place:
+needs O(n) space, not too bad anyways
+
+quicksort for instance is not stable (by default) but can be done in-place arrays
+most of the classic quadratic algorithms also automatically do in-place
+heapsort is not stable and can be done in place, interpreting the input array as heap
+
+
+On to solving the general D&C problem:
+Given T(n) = aT(n/b) + THETA(t(n))
+most of the time the "conquer" step is very easy, t(n) = n, but not always!
+nearly all of the time, t(n) = n^e for some e
+So the recurrence is described entirely by (a,b,e)
+all of which may in general be functions of n but here are restricted to constants
+These are all solved by the Master Theorem
+
+T(n) = 2T(n/2) + THETA(n^2) is solved by T(n) = n^2,
+n^2 = 2*n^2/4 + THETA(n^2), correct
+
+T(n) = 4T(n/2) + n <shortened from THETA(n)> is solved by T(n) = O(n^2) too
+
+
+Simple Master Theorem:
+to solve T(n) = aT(n/b) + THETA(n^e)
+Find delta = a/(b^e)
+    if delta < 1: T(n) = O(n^e)
+     	i.e. recursion is the fast part, "conquering" is slow
+    if delta = 1: T(n) = O(n^e*lg n)
+        i.e. the two parts have comparable time
+    if delta > 1: T(n) = O(n^(log_b a)) = O(a^(log_b n)) 
+        i.e. recursion is the slow part and takes most time
+     	
+all these depend on b > 1, otherwise T(n) = infinity
+a can be >= 0 and e is any real
+
+cheap-solving Master can be done by a tree diagram when a is an integer,
+the tree stores "conquer" costs at each node and creates children subproblem nodes
+add up all the "conquer" costs, typically by level 
+e.g. T(n) = 2T(n/2) + n
+               n
+	n/2         n/2
+    n/4     n/4 n/4     n/4
+    .......................
+Total work is (n per level)*(lgn levels) = O(n*lgn),
+confirm with Master:
+delta = 2/2^1 = 1, predicts O(n*lgn) as expected
+
+Addition is linear, very clearly.
+
+Multiplication by naive method: n-bit by n-bit takes O(n^2) time
+
+Let A B be multiplicands, A = A_h * 2^k + A_l, the high and low halves, and same for B
+AB = A_hB_h * 4^k + (A_hB_l + A_lB_h) * 2^k + A_lB_l,
+this is now 4 subproblems of size n/2, no good, still O(n^2)!
+
+Karatsuba notices instead:
+(A_hB_l + A_lB_h) = (A_l+A_h)(B_l+B_h) - A_hB_h - A_lB_l
+so, computing A_hB_h, A_lB_l, and using those along with just ONE more multiplication gives
+3 subproblems of size n/2, good! O(n^(lg 3)) = O(n^1.58...)
+
+naive is fastest up until 50bits
+karatsuba is fastest up until 1000bits
+toom-cook is fastest up until 30000bits
+schonhage strassen O(n*lgn*lglgn) up until 1000000bits??
+schonhage strassen theoretical bound of O(n*lgn*N^(log*n)) is probably not going to be practical anytime, N proved to be <=8 then <=4 later
+Harvey's O(n*lgn) algorithm is recent, totally galactic, 250000000000 bits
+

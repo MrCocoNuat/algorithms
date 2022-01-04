@@ -1,0 +1,44 @@
+Review:
+
+f = O(g) i.e. f in O(g) iff
+exists c : exists n0 : forall n >= n0 : |f(n)| <= c|g(n)|
+
+i.e. for all sufficiently large input n,
+f(n) is bounded above by some constant multiple of g(n)
+
+Implicit Landau notation:
+writing cos(x) = 1 - x^2/2 + OMEGA(x^4), means that the error term
+is some function of x in OMEGA(x^4) - reminder OMEGA is the ">=" relation
+in fact it is some infinite function x^4/24 - x^6/720 + ...
+
+THETA is a symmetric relation, (remember relation theory?)
+
+f = o(g) iff
+forall c : exists n0 : forall n >= n0 : |f(n)| <= c|g(n)|
+
+Limit comparison theorem:
+lim |f(n)|/|g(n)| = 0, k, infty => f=o(g),f=THETA(g),f=omega(g)
+
+Time complexity of nested loops:
+e.g.
+FOR i in (1,...,n):
+    FOR j in (1,...,i):
+    	<constant time operation>
+Then the time taken is THETA(n^2)
+
+Careful about exactly which elements are iterated over!
+i <- 1
+WHILE i < n:
+      i <- 2i
+      <constant time>
+takes THETA(log n) time
+
+Estimating a series can be done by integral,
+e.g. SUM[1,...,n] 1/i = int[1,n] 1/i di + O(1) = ln(n) + O(1)
+The two sums differing by at most the E-M constant 0.58...
+
+This works especially well when only a one-sided bound is wanted.
+since the above integral can be trivially made to above bound
+the series by a simple shift.
+Just make sure that at each input i the bound really holds
+

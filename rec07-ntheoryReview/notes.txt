@@ -1,0 +1,13 @@
+views on hw5
+
+1. what to do with a tree root(node(leaf,leaf)), not a 2-3 tree but not violating any of the 4 conditions>
+2. careful with the form of the bounds!
+3. consider the combination of the recursion step (-1, /2, ...), how many subrecursions exist,
+   and the constant term when proving bounds.
+   some f(n) = f(n/2) + 2 needs a constant term like log_{2^{1/2}} n, for example, to prove easily.
+   	so f(n) = f(n/2) + 2 < log_{2^{1/2}} n/2 + 2 = log_{2^{1/2}} n
+   some f(n) = 1 + 2f(n-1) needs a constant like -1
+   	so f(n) = 1 + 2f(n-1) < 1 + 2(-1) = -1
+
+   fibLin should be recursive!
+4. 
